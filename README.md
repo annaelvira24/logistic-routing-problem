@@ -33,6 +33,9 @@ Selanjutnya akan diekspan ke seluruh simpul lainnya yang belum dikunjungi untuk 
 ### Optimation using MIP Library
 Optimasi pencarian solusi TSP dilakukan dengan menggunakan library MIP dari python. Model memiliki objektive untuk meminimalkan jarak yang ditempuh dengan batasan bahwa setiap titik hanya dikunjungi satu kali. MIP akan mengoptimasi pencarian TSP dengan **mengeliminasi subtour**, sehingga tour yang dihasilkan langsung memuat seluruh titik dan memiliki bobot minimum.
 
+### Side Notes
+Karena centroid pada saat city clustering diambil secara acak, maka kemungkinan solusi akhir mtsp yang dihasilkan tidak selalu optimal.
+
 ## Getting Started
 ### Prerequisites
 1. Python 3
