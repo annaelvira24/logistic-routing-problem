@@ -26,12 +26,12 @@ Langkah akan diulangi hingga diperoleh kekonvergenan, yaitu ketika posisi koordi
 Selanjutnya dilakukan penyelesaian TSP untuk masing-masing cluster. Penyelesaian TSP dilakukan dengan 2 metode, yaitu algoritma branch and bound dan optimasi menggunakan library MIP dari python.
 
 ### Branch and bound
-Pendekatan Branch and Bound yang digunakan adalah dengan bobot tur lengkap. Awalnya akan dihitung nilai lower bound untuk simpul start dengan formula sebagai berikut:
+Pendekatan Branch and Bound yang digunakan adalah dengan bobot tur lengkap. Awalnya akan dihitung nilai lower bound untuk simpul start dengan formula sebagai berikut:<br>
 <img src = "pic/bobot tur lengkap.png"><br>
-Selanjutnya akan diekspan ke seluruh simpul lainnya untuk dihitung nilai costnya juga dengan formula yang sama. Dipilih simpul dengan nilai cost terkecil untuk diekspan selanjutnya. Jika semua simpul sudah dikunjungi, akan diperoleh nilai cost terkecil sebagai solusi.
+Selanjutnya akan diekspan ke seluruh simpul lainnya yang belum dikunjungi untuk dihitung nilai costnya juga dengan formula yang sama. Dipilih simpul dengan nilai cost terkecil untuk diekspan selanjutnya. Jika semua simpul sudah dikunjungi, akan diperoleh nilai cost terkecil sebagai solusi.
 
 ### Optimation using MIP Library
-Optimasi pencarian solusi TSP dilakukan dengan menggunakan library MIP dari python. Model memiliki objektive untuk meminimalkan jarak yang ditempuh dengan batasan bahwa setiap titik hanya dikunjungi satu kali. MIP akan mengoptimasi pencarian TSP dengan **mengeliminasi subtour**.
+Optimasi pencarian solusi TSP dilakukan dengan menggunakan library MIP dari python. Model memiliki objektive untuk meminimalkan jarak yang ditempuh dengan batasan bahwa setiap titik hanya dikunjungi satu kali. MIP akan mengoptimasi pencarian TSP dengan **mengeliminasi subtour**, sehingga tour yang dihasilkan langsung memuat seluruh titik dan memiliki bobot minimum.
 
 ## Getting Started
 ### Prerequisites
