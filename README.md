@@ -14,60 +14,75 @@ Setiap beberapa jam sekali, sebuah perusahaan logistik akan mengirimkan beberapa
 ## Multiple-Agent TSP
 Masalah pengantaran barang untuk satu kendaraan dengan fungsi objektif jarak minimal dapat dimodelkan oleh Travelling Salesman Problem. Akan tetapi, perusahaan logistik biasanya memiliki lebih dari satu kendaraan yang berangkat bersamaan, sehingga TSP kurang cocok digunakan. Generalisasi TSP untuk beberapa agen adalah **multiple-agent TSP (mTSP)**, dan model masalah ini akan kita gunakan. Pada mTSP, akan terdapat *m* tur yang akan dibangun. Syarat dari semua tur mirip dengan TSP, yaitu bahwa seluruh tur akan kembali ke simpul awal (mewakili kantor pusat) dan setiap tujuan hanya akan dilewati oleh satu tur.
 
-## Tugas
-Kita akan menggunakan dataset jalanan pada kota Oldenburg yang dapat diakses pada <a href="https://www.cs.utah.edu/~lifeifei/SpatialDataset.htm">tautan ini.</a> Lakukan pengunduhan untuk kedua data jalanan di kota Oldenburg. Data pertama merupakan koordinat simpul, data kedua merupakan data sisi antar simpul. Asumsikan seluruh jalan dua arah.<br> 
-Seperti yang disebutkan sebelumnya, kita akan menggunakan pendekatan mTSP dalam permasalahan ini. Untuk mempermudah anda dan mempermudah penilaian, tugas akan dibagi dalam beberapa tahap.
+## Algoritma Untuk Pathfinding
+Algoritma pathfinding yang digunakan adalah algoritma **dijkstra**. Algoritma ini mengunakan pendekatan algoritma greedy. Pada setiap langkah, ambil sisi yang berbobot minimum yang menghubungkan sebuah node yang sudah terpilih dengan sebuah node lain yang belum terpilih. Lintasan dari simpul asal ke simpul yang baru haruslah merupakan lintasan yang terpendek diantara semua lintasannya ke simpul-simpul yang belum terpilih. Dengan algoritma ini kita dapat memperoleh jarak dari suatu node ke seluruh node lainnya pada graf. 
 
-### Milestone 1
-Pada milestone 1, anda diminta untuk membangun sebuah upagraf dari graf jalan keseluruhan kota Oldenburg. Upagraf tersebut merupakan sebuah graf lengkap tak berarah, dengan simpul-simpulnya adalah titik tujuan pengiriman barang ditambah titik yang mewakili kantor pusat perusahaan logistik. Hasilkan sebuah matriks jarak antar simpul upagraf lengkap. Nilai untuk milestone pertama maksimal adalah **600**.
+## Pendekatan Penyelesaian mTSP
+Dalam menyelesaikan persoalan mTSP, saya menggunakan pendekatan heuristik, yaitu melakukan **city clustering dengan algoritma K-Means yang sudah diimprovisasi**. Misalnya terdapat n titik dan m kurir, city clustering ini bertujuan untuk membagi titik-titik lokasi pada kota menjadi m buah cluster secara proporsional. Pembagian cluster dilakukan berdasarkan koordinat titik yang diukur berdasarkan jarak Euclediannya, sehingga untuk setiap cluster, akan memuat paling banyak Q = ⌈n/m⌉ titik. Awalnya centroid untuk setiap cluster adalah m titik yang dpilih secara random, lalu dicari maksimal Q titik dengan jarak eucledian terdekat untuk setiap centroid. Nilai centroid akan di-update dengan formula berikut:<br>
+<img src = 'pic/centroidFormula.png'><br>
+Langkah akan diulangi hingga diperoleh kekonvergenan, yaitu ketika posisi koordinat seluruh centori sudah tidak berubah lagi.
+<br>
+<br>
+Selanjutnya dilakukan penyelesaian TSP untuk masing-masing cluster. Penyelesaian TSP dilakukan dengan 2 metode, yaitu algoritma branch and bound dan optimasi menggunakan library MIP dari python.
 
-### Milestone 2
-Pada Milestone 2 , anda akan menggunakan upagraf yang telah dihasilkan pada Milestone 1 untuk membangun rute dari para kurir dengan pendekatan mTSP. Tampilkan rute yang diambil oleh tiap kurir. Nilai maksimal pada milestone kedua adalah **1500**
+### Branch and bound
+Pendekatan Branch and Bound yang digunakan adalah dengan bobot tur lengkap. Awalnya akan dihitung nilai lower bound untuk simpul start dengan formula sebagai berikut:
+<img src = "pic/bobot tur lengkap.png"><br>
+Selanjutnya akan diekspan ke seluruh simpul lainnya untuk dihitung nilai costnya juga dengan formula yang sama. Dipilih simpul dengan nilai cost terkecil untuk diekspan selanjutnya. Jika semua simpul sudah dikunjungi, akan diperoleh nilai cost terkecil sebagai solusi.
 
-### Milestone 3
-Setelah berhasil mendapatkan rute bagi para kurir, selanjutnya anda diminta untuk menggambarkan rute dari para kurir. Visualisasi rute  minimal membedakan warna rute untuk tiap kurir dan menampilkan upagraf yang digunakan untuk membuat rute. Nilai lebih akan diberikan jika anda dapat menampilkan rute beserta seluruh peta jalan di kota Oldenburg. Nilai minimal adalah **800** dan nilai maksimal adalah **1500**
+### Optimation using MIP Library
+Optimasi pencarian solusi TSP dilakukan dengan menggunakan library MIP dari python. Model memiliki objektive untuk meminimalkan jarak yang ditempuh dengan batasan bahwa setiap titik hanya dikunjungi satu kali. MIP akan mengoptimasi pencarian TSP dengan **mengeliminasi subtour**.
 
-## Pengerjaan
-Tugas ini individual.<br>
-Lakukan *fork* terhadap *repository* ini.<br>
-Spek tugas cukup umum, sehingga asisten tidak membatasi algoritma maupun bahasa pemrograman yang digunakan, walaupun **penggunaan Python disarankan**. Algoritma yang digunakan untuk pathfinding harus optimal, namun hasil dari mTSP tidak harus optimal (*Note : beberapa pustaka optimization bisa menghasilkan solusi sub-optimal dalam batas waktu tertentu*). Bila merasa sudah menyelesaikan tugas, silahkan lakukan pull request dan hubungi asisten lewat email untuk melakukan demo.<br>
-Pastikan ada menambahkan/menggati README ini saat mengumpulkan. README minimal mengandung :
+## Getting Started
+### Prerequisites
+1. Python 3
+2. library mip<br>
+dapat diinstal dengan perintah berikut di cmd
+```
+pip install mip
+```
+3. library networkx<br>
+dapat diinstal dengan perintah berikut di cmd
+```
+pip install networkx
+```
+4. library matplotlib<br>
+dapat diinstal dengan perintah berikut di cmd
+```
+pip install matplotlib
+```
 
-1. Pendekatan algoritma yang digunakan untuk pathfinding dan penyelesaian mTSP, serta 
-2. Cara menjalankan program, termasuk instalasi pustaka bila menggunakan bermacam pustaka
+## Running the Program
+1. Buka cmd di folder src
+2. ketikkan perintah berikut di cmd
+```
+py main.py
+```
+3. Program utama sudah dieksekusi
 
-Anda bebas menggunakan pustaka maupun referensi apapun untuk mengerjakan tugas, kecuali kode/pustaka jadi yang melakukan *routing*, karena tujuan tugas adalah membuat sebuah prototipe pembuatan rute. Pastikan anda mencantumkan sumber bilamana anda menggunakan kode dari orang lain. Akan tetapi, pemahaman terhadap solusi masalah menjadi bagian penting dari penilaian , sehingga anda disarankan untuk menuliskan kode anda sendiri.<br>
+## Testing
+1. Masukkan pilihan kota yang ingin diuji
+2. Masukkan pilihan metode penyelesaian TSP
+3. Masukkan n wilayah pada kota yang merupakan daerah tujuan pengantaran paket
+4. Masukkan sejumlah n id wilayah tujuan pengantaran paket (harus berbeda)
+5. Masukkan id wilayah kantor pusat pengiriman barang, harus berbeda dari n wilayah tujuan sebelumnya (disarankan merupakan wilayah yang strategis, berada di tengah kota)
+6. Masukkan jumlah kurir
+7. Hasil akan ditampilkan
 
-## Penilaian
-Nilai maksimal non-bonus adalah **4200**. Penilaian akan dilakukan berdasarkan : 
-1. kode sumber,
-2. pendekatan solusi, 
-2. demo aplikasi dan ,
-3. pemahaman terhadap solusi masalah.
 
-Untuk poin (1) dan poin (2) , nilai maksimal adalah **3600** dari ketiga milestone.<br> 
-Demo hanya dapat dilakukan sekali. Demo bernilai **600** poin. Pada demo, anda akan menunjukkan hasil aplikasi dan akan terdapat tanya jawab untuk menguji pemahaman.<br>
-Asisten juga akan menjalankan **plagiarism checking** antar kode sumber peserta. Bila ditemukan adanya kecurangan, maka nilai peserta bersangkutan adalah 0 tanpa pengubahan, dan pengurangan poin maksimal tidak akan berlaku. Perhatikan bahwa selama anda mencantumkan asal kode yang anda salin , tidak menggunakan pustaka untuk *routing* dan tidak menyalin kode milik teman anda, anda tidak akan mendapat masalah.
-
-## Bonus
-Bonus **300** poin diberikan jika anda dapat mengirimkan hasil algoritma beserta beberapa contoh masukan/keluaran untuk kasus kota San Francisco , dengan jumlah jalanan yang lebih besar dari Kota Oldenburg. Dataset dapat diambil di website yang sama.
-
-## Kontak
-Silahkan hubungi asisten lewat line @alamhasabiebaru atau lewat email 13517096@std.stei.itb.ac.id dengan subjek diawal tulisan \[SELEKSI IRK\] . *Note : waktu menjawab bervariasi, namun email biasanya akan dibalas kurang dari sehari. Line mungkin tidak dibalas dalam waktu satu-dua hari. Mohon bersabar :)*. Pertanyaan juga dipersilahkan. Jawaban akan diposting dalam bagian QnA README ini.
-
-## QnA
-Masih kosong :).
-
-## Referensi
-Silahkan gunakan referensi berikut sebagai awal pengerjaan tugas:<br>
+## Refrensi
 [1] Dataset : https://www.cs.utah.edu/~lifeifei/SpatialDataset.htm<br>
 [2] Pengenalan dan formulasi mTSP : https://neos-guide.org/content/multiple-traveling-salesman-problem-mtsp<br>
 [3] MIP , pustaka Python untuk optimisasi : https://python-mip.readthedocs.io/en/latest/intro.html<br>
-[4] OpenGL untuk Python : https://stackabuse.com/brief-introduction-to-opengl-in-python-with-pyopengl/<br>
-[5]  Li, Feifei, Dihan Cheng, Marios Hadjieleftheriou, George Kollios, and Shang-Hua Teng. "On trip planning queries in spatial databases." In International symposium on spatial and temporal databases, pp. 273-290. Springer, Berlin, Heidelberg, 2005.
+[4] Li, Feifei, Dihan Cheng, Marios Hadjieleftheriou, George Kollios, and Shang-Hua Teng. "On trip planning queries in spatial databases." In International symposium on spatial and temporal databases, pp. 273-290. Springer, Berlin, Heidelberg, 2005.<br>
+[5] Dijkstra Algorithm : https://www.geeksforgeeks.org/python-program-for-dijkstras-shortest-path-algorithm-greedy-algo-7/<br>
+[6] K-Mean Algorithm : https://link.springer.com/article/10.1007/s00500-017-2705-5 <br>
+[7] TSP using Branch and Bound Algorithm : https://www.geeksforgeeks.org/traveling-salesman-problem-using-branch-and-bound-2/ and http://informatika.stei.itb.ac.id/~rinaldi.munir/Stmik/2017-2018/Algoritma-Branch-&-Bound-(2018).pdf<br>
+[8] MIP in Modelling TSP : https://python-mip.readthedocs.io/en/latest/examples.html <br>
+[9] Draw directed graph in Networkx : https://stackoverflow.com/questions/20133479/how-to-draw-directed-graphs-using-networkx-in-python 
 
 ## Credits
 Thank you for Li Fei Fei et. al. for providing the data.
 
-## Final Words
-Akhir Kata, selamat bersenang-senang ! It's not worth it if you're not having fun.
+## Author
+Anna Elvira Hartoyo - 13518045
